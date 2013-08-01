@@ -1,5 +1,6 @@
 temp
 node_modules
+bower_components
 libpeerconnection.log
 *.swp
 .*.swp
