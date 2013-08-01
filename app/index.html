@@ -1,0 +1,28 @@
+<html ng-app="geoapp">
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Piedra' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Titan+One' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="http://cloud.github.com/downloads/lafeber/world-flags-sprite/flags32.css" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.3/leaflet.ie.css" />
+    <![endif]-->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body ng-controller="GeoqueryController">
+    <div class="info country f32">
+        <div ng-show="geojson.selected" class="flag" ng-class="countries[geojson.selected.id]['alpha-2']"></div>
+        {{ geojson.selected.properties.name || 'No country'}}
+    </div>
+    <div class="logo">
+        <h1><a href="#">geoquery</a></h1>
+        <h2>Geography learning</h2>
+    </div>
+    <leaflet center="center" legend="legend" geojson="geojson" defaults="defaults"></leaflet>
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script src="bower_components/angular-leaflet/src/angular-leaflet-directive.js"></script>
+    <script src="js/app.js" /></script>
+  </body>
+</html>

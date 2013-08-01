@@ -1,0 +1,17 @@
+{
+  "name": "geoquery",
+  "version": "0.0.1",
+  "main": "geoquery",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "dependencies": {
+    "jquery": "latest",
+    "angular": "latest",
+    "angular-leaflet": "latest",
+    "font-awesome": "latest",
+    "bootstrap": "latest"
+  }
+}

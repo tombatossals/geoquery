@@ -1,0 +1,47 @@
+{
+  "name": "geoquery",
+  "version": "0.0.1",
+  "description": "Geoquery",
+  "homepage": "https://github.com/tombatossals/geoquery",
+  "subdomain": "geoquery",
+  "scripts": {
+    "test": "grunt jshint",
+    "start": ""
+  },
+  "author": {
+    "name": "David Rubert",
+    "email": "david.rubert@gmail.com",
+    "web": "http://tombatossals.github.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:tombatossals/geoquery.git"
+  },
+  "engines": {
+    "node": "latest"
+  },
+  "dependencies": {
+    "underscore": "latest",
+    "express": "latest",
+    "mustache": "latest",
+    "socket.io": "latest"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-cssmin": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-contrib-sass": "latest",
+    "grunt-contrib-connect": "latest",
+    "grunt-zip": "latest",
+    "grunt-cli": "latest",
+    "bower": "latest",
+    "grunt": "latest"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/tombatossals/geoquery/blob/master/LICENSE"
+    }
+  ]
+}
