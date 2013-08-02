@@ -1,0 +1,10 @@
+{
+    "logout": "logout",
+    "login" : "login",
+    "googlelogin" : "login/google",
+    "user" : "user",
+    "authcallback" : "auth/google/callback",
+    "api": {
+        "user": "api/user"
+    }
+}

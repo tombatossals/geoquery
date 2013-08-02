@@ -76,3 +76,15 @@ div.country {
 .angular-leaflet-map {
     height: 100%;
 }
+
+.countdown {
+    position: absolute;
+    top: 1.3em;
+    left: 4em;
+    z-index: 100;
+}
+
+.countdown > h2 {
+    font-size: 3em;
+    margin: .5em .5em;
+}

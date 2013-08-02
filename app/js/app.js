@@ -1,7 +1,7 @@
 (function() {
     var app = angular.module("geoapp", ["leaflet-directive"]);
 
-    app.controller("GeoqueryController", [ "$scope", "$http", function($scope, $http) {
+    app.controller("GeoqueryController", [ "$scope", "$http", "$timeout", function($scope, $http, $timeout) {
         var continentProperties= {
             "009": {
                     name: 'Oceania',
@@ -93,9 +93,9 @@
                     }
                 });
 
-                $defer(function someWork(){
-                    $scope.countdown = Date.now();
-                    $defer(someWork, 1000);
+                $timeout(function getSeconds(){
+                    $scope.countdown = 60 - new Date().getSeconds();
+                    $timeout(getSeconds, 1000);
                 },1000);
 
             });

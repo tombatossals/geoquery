@@ -21,10 +21,18 @@
     "node": "latest"
   },
   "dependencies": {
-    "underscore": "latest",
     "express": "latest",
-    "mustache": "latest",
-    "socket.io": "latest"
+    "mongoose": "latest",
+    "winston": "latest",
+    "pm2": "latest",
+    "emailjs": "latest",
+    "passport": "latest",
+    "passport-google-oauth": "latest",
+    "passport-google": "latest",
+    "session-mongoose": "latest",
+    "mongoose-findorcreate": "latest",
+    "socket.io": "latest",
+    "jade": "latest"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "latest",
