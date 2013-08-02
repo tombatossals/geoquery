@@ -1,10 +1,13 @@
 {
-    "logout": "logout",
-    "login" : "login",
-    "googlelogin" : "login/google",
+    "persona": {
+        "login" : "persona/login",
+        "logout": "persona/logout",
+        "status" : "persona/status",
+        "verify" : "persona/verify"
+    },
     "user" : "user",
-    "authcallback" : "auth/google/callback",
     "api": {
-        "user": "api/user"
+        "user": "api/user",
+        "response": "api/response"
     }
 }

@@ -27,6 +27,7 @@
     "pm2": "latest",
     "emailjs": "latest",
     "passport": "latest",
+    "passport-persona": "latest",
     "passport-google-oauth": "latest",
     "passport-google": "latest",
     "session-mongoose": "latest",

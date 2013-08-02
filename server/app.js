@@ -6,16 +6,15 @@ var express = require('express'),
     urls_constructor = require('./common/urls_constructor'),
     generate_mongo_url = require('./common/generate_mongo_url'),
     passport = require('passport'),
-    google_auth = require('./common/google_auth'),
-    relative_urls = require('./config/urls');
+    auth = require('./common/auth'),
+    relative_urls = require('./config/urls'),
+    socketio = require('./common/socketio');
 
 var SessionMongoose = require('session-mongoose')(express),
     app = express();
 
 var urls = urls_constructor(settings.base_url, relative_urls);
-
-google_auth.configure(urls.authcallback, urls.login);
-
+auth.configure(urls.persona.verify, urls.login);
 
 if(process.env.VCAP_SERVICES){
     var env = JSON.parse(process.env.VCAP_SERVICES);
@@ -59,6 +58,7 @@ app.configure('production', function(){
 });
 
 require('./routes')(app, urls);
-app.listen(settings.server_port);
+
+socketio.createServer(app, settings.server_port);
 
 module.exports = app;

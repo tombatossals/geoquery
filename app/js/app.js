@@ -1,7 +1,13 @@
 (function() {
-    var app = angular.module("geoapp", ["leaflet-directive"]);
+    var app = angular.module("geoapp", ["geoapp.persona", "leaflet-directive"]);
 
-    app.controller("GeoqueryController", [ "$scope", "$http", "$timeout", function($scope, $http, $timeout) {
+    app.controller("GeoqueryController", [ "$scope", "$http", "$timeout", "personaSvc", function($scope, $http, $timeout, personaSvc) {
+
+        var socket = io.connect('http://localhost');
+        socket.on('country', function (data) {
+            $scope.actual = data;
+        });
+
         var continentProperties= {
             "009": {
                     name: 'Oceania',
@@ -31,14 +37,23 @@
                 lng: 14.0625,
                 zoom: 2
             },
-            legend: {
-                colors: [ '#CC0066', '#006699', '#FF0000', '#00CC00', '#FFCC00' ],
-                labels: [ 'Oceania', 'America', 'Europe', 'Africa', 'Asia' ]
-            },
             defaults: {
                 minZoom: 2,
                 maxZoom: 5
-            }
+            },
+            maxbounds: {
+                southWest: {
+                    lat: -136.45,
+                    lng: 281.83
+                },
+                northEast: {
+                    lat: 156.00,
+                    lng: -210.00
+                }
+            },
+            verified:false,
+            error:false,
+            email:""
         });
 
         // Get a country paint color from the continents array of colors
@@ -65,6 +80,7 @@
 
         // Mouse over function, called from the Leaflet Map Events
         function mouseover(e) {
+            if (!$scope.verified) return;
             var layer = e.target;
             layer.setStyle({
                 weight: 2,
@@ -72,6 +88,14 @@
                 fillColor: 'white'
             });
             layer.bringToFront();
+        }
+
+        function sendCountry(country, event) {
+            if (country.id === $scope.actual.alpha3) {
+                console.log("good!");
+            } else {
+                console.log("bad!", $scope.countries[country.id].name, $scope.actual.name);
+            }
         }
 
         // Get the countries data from a JSON
@@ -89,7 +113,8 @@
                     geojson: {
                         data: data,
                         style: style,
-                        mouseover: mouseover
+                        mouseover: mouseover,
+                        click: sendCountry
                     }
                 });
 
@@ -100,5 +125,35 @@
 
             });
         });
+
+        $scope.verify = function () {
+            personaSvc.verify().then(function (email) {
+                angular.extend($scope, { verified:true, error:false, email:email });
+                $scope.status();
+            }, function (err) {
+                angular.extend($scope, { verified:false, error:err});
+            });
+        };
+
+        $scope.logout = function () {
+            personaSvc.logout().then(function () {
+                angular.extend($scope, { verified:false, error:false});
+            }, function (err) {
+                $scope.error = err;
+            });
+        };
+
+        $scope.status = function () {
+            personaSvc.status().then(function (data) {
+                // in addition to email, everything else returned by persona/status will be added to the scope
+                // this could be the chance to expose data from your local DB, for example
+                angular.extend($scope, data, { error:false, verified:!!data.email, email:data.email });
+            }, function (err) {
+                $scope.error = err;
+            });
+        };
+
+        // setup; check status once on init
+        $scope.status();
     } ]);
 }());

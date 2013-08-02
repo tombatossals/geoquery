@@ -1,39 +1,13 @@
-extends layout
-block main
-  div(style="margin: 3em auto; width: 40em;")
-    h2(style="border-bottom: 2px solid #888; margin-bottom: 0em;") Account settings
-    form.form-horizontal(ng-submit="saveUser()")
-      table.table.table-striped
-        tbody
-          tr
-            td
-              strong Name
-            td #{locals.user.displayName}
-          tr
-            td
-              strong Email
-            td #{locals.user.email}
-          tr
-            td
-              strong Pushover token
-            td
-              input(type="text", ng-model="pushover")
-          tr
-            td
-              strong Phone
-            td
-              input(type="text", ng-model="phone")
-          tr
-            td
-            td
-              button.btn(type="submit", style="margin-right: 1em;") Save
-              span.label.label-success(ng-cloak, ng-show="messageOk") Changes saved!
-    h2(style="border-bottom: 2px solid #888; margin-bottom: 0em;") Subscribed links
-    form.form-horizontal(ng-submit="saveUser()")
-      table.table.table-striped
-        tbody
-          tr(ng-repeat="enlace in subscriptions")
-            td
-              button.btn.btn-warning(ng-click="unsubscribe(enlace._id)") Unsubscribe
-            td {{enlace.supernodos[0].name}} - {{enlace.supernodos[1].name }}
-
+html(ng-app="persona")
+    body(ng-controller="PersonaCtrl")
+        div(ng-hide="verified")
+            button(ng-click="verify()") Verify Identity
+        div(ng-show="verified")
+            | Hello {{email}}
+            br
+            button(ng-click="logout()") Log Out
+        div(ng-show="error")
+            strong {{error}}
+    script(src="https://login.persona.org/include.js")
+    script(src="angular.js")
+    script(src="persona.js")

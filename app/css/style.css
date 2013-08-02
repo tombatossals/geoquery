@@ -44,7 +44,7 @@ div.logo > h1 {
     font-family: 'Piedra';
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
     color: white;
-    font-size: 4em;
+    font-size: 3em;
     margin: 0;
 }
 
@@ -55,36 +55,49 @@ div.logo > h1 > a {
 
 div.logo > h2 {
     font-family: 'Titan one';
+    text-align: right;
+    font-size: 1em;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
     margin: 0;
     color: white;
 }
 
 div.country {
-    font-size: 2em;
-    font-weight: bold;
     position: absolute;
     bottom: 1em;
-    left: 1em;
+    left: 25%;
     z-index: 100;
-    padding: .5em;
-    line-height: 1.1em;
-    width: 300px;
+    width: 600px;
     text-align: center;
+    padding: .5em;
+}
+
+div.country > h3 {
+    margin: 0em;
+    font-size: 1em;
+    font-weight: bold;
+    line-height: 1.1em;
+}
+
+div.country > h2 {
+    margin: 0em;
+    font-size: 1.8em;
+    font-weight: bold;
+    line-height: 1.1em;
 }
 
 .angular-leaflet-map {
     height: 100%;
 }
 
-.countdown {
+.topmenu {
     position: absolute;
-    top: 1.3em;
-    left: 4em;
+    top: .8em;
+    left: 3em;
     z-index: 100;
 }
 
-.countdown > h2 {
+.topmenu > h2 {
     font-size: 3em;
     margin: .5em .5em;
 }

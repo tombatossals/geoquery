@@ -11,6 +11,7 @@
     "jquery": "latest",
     "angular": "latest",
     "angular-leaflet": "latest",
+    "socket.io": "latest",
     "font-awesome": "latest",
     "bootstrap": "latest"
   }

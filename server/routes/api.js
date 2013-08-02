@@ -2,10 +2,16 @@
 
 var User      = require('../common/models/user'),
     fs        = require('fs'),
-    ensureAuthenticated = require('../common/google_auth').ensureAuthenticated,
-    checkAuthenticated = require('../common/google_auth').checkAuthenticated;
+    ensureAuthenticated = require('../common/auth').ensureAuthenticated,
+    checkAuthenticated = require('../common/auth').checkAuthenticated;
 
 module.exports = function(app, urls) {
+
+    app.put(urls.api.response, checkAuthenticated, function(req, res) {
+        var countryCode = req.body.code;
+
+        res.json({ status: "ok", code: countryCode });
+    });
 
     app.put(urls.api.user, ensureAuthenticated, function(req, res) {
         var phone = req.body.phone;

@@ -2,7 +2,7 @@
 
 var util = require("util"),
     fs = require("fs"),
-    ensureAuthenticated = require('../common/google_auth').ensureAuthenticated;
+    ensureAuthenticated = require('../common/auth').ensureAuthenticated;
 
 module.exports = function(app, urls) {
 
@@ -21,7 +21,7 @@ module.exports = function(app, urls) {
         });
     });
 
-    app.get(urls.base, function(req, res) {
+    app.get(urls.base, ensureAuthenticated, function(req, res) {
         var title = "Troncal de la plana";
         res.render("main", {
             controller: "MapController",

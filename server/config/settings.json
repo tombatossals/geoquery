@@ -11,9 +11,6 @@
     	"name": "",
     	"db": "geoquery"
     },
-    "GOOGLE_CLIENT_ID": "936919750992.apps.googleusercontent.com",
-    "GOOGLE_CLIENT_SECRET": "suJgZB4-vIp3-SigA0EUuyFx",
-    "PUSHOVER_APPKEY": "tDnkzxrAH9fiUo92EovBKwjpVCFNv5",
     "email_options": {
         "host": "10.228.144.162",
         "port": 25,
