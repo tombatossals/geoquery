@@ -8,6 +8,11 @@
     "user" : "user",
     "api": {
         "user": "api/user",
-        "response": "api/response"
+        "response": "api/response",
+        "countries": {
+            "config"  : "api/map/:map/config",
+            "data"   : "api/map/:map/data",
+            "geojson" : "api/map/:map/geojson"
+        }
     }
 }

@@ -1,60 +1,34 @@
 (function() {
-    var app = angular.module("geoapp", ["geoapp.persona", "leaflet-directive"]);
+    var app = angular.module("geoapp", ["geoapp.persona", "leaflet-directive"])
+                .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+                    $routeProvider
+                        .when('/:map', {});
+        } ]);
 
-    app.controller("GeoqueryController", [ "$scope", "$http", "$timeout", "personaSvc", function($scope, $http, $timeout, personaSvc) {
-
-        var socket = io.connect('http://localhost');
-        socket.on('country', function (data) {
-            $scope.actual = data;
-        });
-
-        var continentProperties= {
-            "009": {
-                    name: 'Oceania',
-                    colors: [ '#CC0066', '#993366', '#990066', '#CC3399', '#CC6699' ]
-            },
-            "019": {
-                    name: 'America',
-                    colors: [ '#006699', '#336666', '#003366', '#3399CC', '#6699CC' ]
-            },
-            "150": {
-                    name: 'Europe',
-                    colors: [ '#FF0000', '#CC3333', '#990000', '#FF3333', '#FF6666' ]
-            },
-            "002": {
-                    name: 'Africa',
-                    colors: [ '#00CC00', '#339933', '#009900', '#33FF33', '#66FF66' ]
-            },
-            "142": {
-                    name: 'Asia',
-                    colors: [ '#FFCC00', '#CC9933', '#999900', '#FFCC33', '#FFCC66' ]
-            },
-        };
+    app.controller("GeoqueryController", [ "$scope", "$http", "$timeout", "$location", "$route", "$routeParams", "personaSvc", function($scope, $http, $timeout, $location, $route, $routeParams, personaSvc) {
 
         angular.extend($scope, {
-            center: {
-                lat: 40.8471,
-                lng: 14.0625,
-                zoom: 2
-            },
-            defaults: {
-                minZoom: 2,
-                maxZoom: 5
-            },
-            maxbounds: {
-                southWest: {
-                    lat: -136.45,
-                    lng: 281.83
-                },
-                northEast: {
-                    lat: 156.00,
-                    lng: -210.00
-                }
-            },
+            leaflet: {},
             verified:false,
             error:false,
-            email:""
+            email: "",
+            center: {
+                lat: 40.09,
+                lng: -3.82,
+                zoom: 2
+            },
+            minZoom: 2,
+            maxZoom: 5,
+            maxBounds: {}
         });
+
+        $scope.$on(
+            "$routeChangeSuccess",
+            function(){
+                $scope.map = $routeParams.map;
+                loadMap($scope.map);
+            }
+        );
 
         // Get a country paint color from the continents array of colors
         function getColor(country) {
@@ -62,7 +36,7 @@
                 return "#FFF";
             }
 
-            var colors = continentProperties[country["region-code"]].colors;
+            var colors = $scope.colors[country["region-code"]];
             var index = country["alpha-3"].charCodeAt(0) % colors.length ;
             return colors[index];
         }
@@ -74,8 +48,13 @@
                 opacity: 1,
                 color: 'white',
                 dashArray: '3',
-                fillOpacity: 0.7
+                fillOpacity: 0.9
             };
+        }
+
+        function mouseout(e) {
+            if (!$scope.verified) return;
+            $scope.testing.geojson.resetStyle(e.target);
         }
 
         // Mouse over function, called from the Leaflet Map Events
@@ -98,34 +77,95 @@
             }
         }
 
-        // Get the countries data from a JSON
-        $http.get("json/all.json").success(function(data, status) {
-            // Put the countries on an associative array
-            $scope.countries = {};
-            for (var i=0; i< data.length; i++) {
-                var country = data[i];
-                $scope.countries[country['alpha-3']] = country;
+        function resetMap(map) {
+            for (var i in $scope.testing.geojson._layers) {
+                var layer = $scope.testing.geojson._layers[i];
+                $scope.testing.geojson.resetStyle(layer);
             }
+        }
 
-            // Get the countries geojson data from a JSON
-            $http.get("json/countries.geo.json").success(function(data, status) {
-                angular.extend($scope, {
-                    geojson: {
-                        data: data,
-                        style: style,
-                        mouseover: mouseover,
-                        click: sendCountry
-                    }
+        function findVector(layers, id) {
+            for (var key in layers) {
+                var layer = layers[key];
+                if (layer.feature.id === id) {
+                    return layer;
+                }
+            }
+            return undefined;
+        }
+
+        function deactivateCountry(code) {
+            var layer = findVector($scope.testing.geojson._layers, code);
+            if (layer) {
+                layer.setStyle({
+                    fillOpacity: 0,
+                    weight: 0,
+                    color: '#666',
+                    fillColor: 'white'
                 });
+                layer.bringToFront();
+            } else {
+                console.log("Can't find country", code);
+            }
+        }
 
-                $timeout(function getSeconds(){
-                    $scope.countdown = 60 - new Date().getSeconds();
-                    $timeout(getSeconds, 1000);
-                },1000);
+        function loadMap(map) {
+            // Get the countries data from a JSON
+            $http.get("/api/map/" + $scope.map + "/config").success(function(data, status) {
 
+                angular.extend($scope, data);
+                $http.get("/api/map/" + $scope.map + "/data").success(function(data, status) {
+
+                    // Put the countries on an associative array
+                    $scope.countries = {};
+                    for (var i=0; i< data.length; i++) {
+                        var country = data[i];
+                        $scope.countries[country['alpha-3']] = country;
+                    }
+
+                    // Get the countries geojson data from a JSON
+                    $http.get("/api/map/" + $scope.map + "/geojson").success(function(data, status) {
+                        angular.extend($scope, {
+                            geojson: {
+                                data: data,
+                                style: style,
+                                mouseover: mouseover,
+                                mouseout: mouseout,
+                                click: sendCountry
+                            }
+                        });
+
+                        $timeout(function getSeconds(){
+                            $scope.countdown = 60 - new Date().getSeconds();
+                            $timeout(getSeconds, 1000);
+                        },1000);
+
+                        var socket = io.connect('http://localhost/' + map);
+                        socket.on('next', function (data) {
+                            if (data.reset) {
+                                resetMap(map);
+                            }
+
+                            if ($scope.actual) {
+                                deactivateCountry($scope.actual["alpha-3"]);
+                            }
+                            $scope.actual = $scope.countries[data.next];
+                            $scope.left = data.left;
+                        });
+
+                        socket.emit('init', map);
+                        socket.on('initresponse', function(data) {
+                            for (var i in data.out) {
+                                var country = data.out[i];
+                                deactivateCountry(country);
+                            }
+                        });
+                    });
+                });
             });
-        });
+        }
 
+        // PERSONA CODE
         $scope.verify = function () {
             personaSvc.verify().then(function (email) {
                 angular.extend($scope, { verified:true, error:false, email:email });

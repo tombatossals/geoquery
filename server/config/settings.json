@@ -11,6 +11,7 @@
     	"name": "",
     	"db": "geoquery"
     },
+    "cookieSecret": "eldorado",
     "email_options": {
         "host": "10.228.144.162",
         "port": 25,

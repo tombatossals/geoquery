@@ -12,21 +12,39 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body ng-controller="GeoqueryController">
-    <div class="logo">
-        <h1><a href="#"><img src="img/logo.png" /> geoquery</a></h1>
-        <h2>Geography learning site</h2>
+    <div class="navbar navbar-fixed-top topmenu">
+        <a class="navbar-brand" href="#">Geoquery</a>
+        <ul class="nav navbar-nav pull-right">
+            <li><a href="#">About</a></li>
+            <li>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select a Map&nbsp;<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#/world">World</a>
+                    <li><a href="#/africa">Africa</a>
+                    <li><a href="#/asia">Asia</a>
+                    <li><a href="#/europe">Europe</a>
+                    <li><a href="#/northamerica">North America</a>
+                    <li><a href="#/oceania">Oceania</a>
+                    <li><a href="#/southamerica">South America</a>
+                </ul>
+            </li>
+            <li class="space" ng-switch on="verified">
+                <button class="btn btn-default navbar-btn" ng-click="verify()" ng-switch-when="false">Join the game</a>
+                <button ng-switch-when="true" class="btn btn-success navbar-btn dropdown-toggle" data-toggle="dropdown">Your account&nbsp;<span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Preferences</a>
+                    <li><a href="#">Statistics</a>
+                    <li><a href="#" ng-click="logout()">Logout</a>
+                </ul>
+            </li>
+        </ul>
     </div>
-    <div class="info topmenu">
-        <a class="btn btn-success" ng-click="verify()" ng-show="!verified">Login</a>
-        <a class="btn btn-warning" ng-click="logout()" ng-show="verified">Logout {{ email }}</a>
+    <div class="info leftbar" ng-show="map" ng-cloak>
+        <h2>{{ name }}</h2>
+        <p>{{ actual.name }}</p>
+        <p>Countries left: {{ left }}</p>
     </div>
-    <div class="info country f32" ng-show="actual" ng-cloak>
-        <h3>Can you find...</h3>
-        <h2><div class="flag" ng-class="actual.alpha2"></div>
-            {{ countries[actual.alpha3].name }}
-        </h2>
-    </div>
-    <leaflet center="center" legend="legend" geojson="geojson" defaults="defaults" maxbounds="maxbounds"></leaflet>
+    <leaflet center="center" legend="legend" geojson="geojson" defaults="defaults" maxbounds="maxbounds" testing="testing"></leaflet>
 
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>

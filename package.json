@@ -30,10 +30,9 @@
     "passport-persona": "latest",
     "passport-google-oauth": "latest",
     "passport-google": "latest",
-    "session-mongoose": "latest",
+    "connect-mongostore": "latest",
     "mongoose-findorcreate": "latest",
-    "socket.io": "latest",
-    "jade": "latest"
+    "socket.io": "latest"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "latest",

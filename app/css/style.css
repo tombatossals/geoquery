@@ -63,6 +63,7 @@ div.logo > h2 {
 }
 
 div.country {
+    pointer-events: none;
     position: absolute;
     bottom: 1em;
     left: 25%;
@@ -95,9 +96,33 @@ div.country > h2 {
     top: .8em;
     left: 3em;
     z-index: 100;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    opacity: .9;
+    width: 70%;
+}
+
+.leftbar {
+    pointer-events: none;
+    position: absolute;
+    top: 5em;
+    width: 20em;
+    left: .8em;
+    z-index: 100;
+    opacity: .9;
+}
+
+.leftbar > h2 {
+    font-size: 3em;
+    margin: .5em .5em;
+    font-weight: bold;
 }
 
 .topmenu > h2 {
     font-size: 3em;
     margin: .5em .5em;
+}
+
+li.space {
+    margin-left: 1em;
 }
