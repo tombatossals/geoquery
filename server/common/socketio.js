@@ -5,7 +5,6 @@ var http = require('http'),
     io = require('socket.io'),
     express = require('express'),
     config = require('../config/countries'),
-    settings = require('../config/settings'),
     getCountriesByMap = require('./countries').getCountriesByMap,
     board = initBoard();
 
@@ -24,7 +23,6 @@ function broadcastOneMoreRegion(socket, map) {
     var left = board[map].left;
     var reset = false;
 
-    console.log(board[map]);
     if (board[map].players.length === 0) {
         return;
     }

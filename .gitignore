@@ -1,6 +1,7 @@
 temp
 node_modules
 bower_components
+config/settings_production.json
 libpeerconnection.log
 *.swp
 .*.swp

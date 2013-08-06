@@ -1,13 +1,8 @@
 "use strict";
 
 var passport = require('passport'),
-    settings = require('../config/settings'),
-    relative_urls = require('../config/urls'),
-    urls_constructor = require('./urls_constructor'),
     User = require('./models/user'),
     PersonaStrategy = require('passport-persona').Strategy;
-
-var urls = urls_constructor(settings.base_url, relative_urls);
 
 function configure() {
 
@@ -37,7 +32,7 @@ function checkAuthenticated(req, res, next) {
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) { return next(); }
     req.session.redirectUrl = req.url;
-    res.redirect(urls.persona.login);
+    res.redirect("/");
 }
 
 module.exports.ensureAuthenticated = ensureAuthenticated;
