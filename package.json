@@ -21,6 +21,7 @@
     "node": "0.10.15"
   },
   "dependencies": {
+    "underscore": "latest",
     "express": "latest",
     "mongoose": "latest",
     "winston": "latest",
