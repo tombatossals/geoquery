@@ -144,11 +144,10 @@
                         socket.on('next', function (data) {
                             if (data.reset) {
                                 resetMap(map);
-                            }
-
-                            if ($scope.actual) {
+                            } else if ($scope.actual) {
                                 deactivateCountry($scope.actual["alpha-3"]);
                             }
+
                             $scope.actual = $scope.countries[data.next];
                             $scope.left = data.left;
                         });

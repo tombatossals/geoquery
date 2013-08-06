@@ -51,7 +51,7 @@ function broadcastOneMoreRegion(socket, map) {
         }
     }
 
-    setTimeout(function() { broadcastOneMoreRegion(socket, map) }, 1000);
+    setTimeout(function() { broadcastOneMoreRegion(socket, map) }, 5000);
 }
 
 var socketio = function() {};
