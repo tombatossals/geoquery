@@ -18,7 +18,7 @@
     "url": "git@github.com:tombatossals/geoquery.git"
   },
   "engines": {
-    "node": "latest"
+    "node": "0.10.15"
   },
   "dependencies": {
     "express": "latest",
@@ -26,11 +26,11 @@
     "winston": "latest",
     "pm2": "latest",
     "emailjs": "latest",
+    "connect-memcached": "latest",
     "passport": "latest",
     "passport-persona": "latest",
     "passport-google-oauth": "latest",
     "passport-google": "latest",
-    "connect-mongostore": "latest",
     "mongoose-findorcreate": "latest",
     "socket.io": "latest"
   },

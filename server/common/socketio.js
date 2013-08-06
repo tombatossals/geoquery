@@ -24,12 +24,12 @@ function broadcastOneMoreRegion(socket, map) {
     var left = board[map].left;
     var reset = false;
 
+    console.log(board[map]);
     if (board[map].players.length === 0) {
         return;
     }
 
     if (left.length === 0) {
-        console.log("reloading...");
         board[map].left = board[map].regions.slice(0);
         board[map].out = [];
         left = board[map].left;
@@ -41,12 +41,14 @@ function broadcastOneMoreRegion(socket, map) {
     board[map].out.push(next);
 
     if (next) {
+        var numberOfPlayers = board[map].players.length;
         for (var i in board[map].players) {
             var s = board[map].players[i];
             s.emit("next", {
                 next: next,
                 left: left.length,
-                reset: reset
+                reset: reset,
+                players: numberOfPlayers
             });
         }
     }

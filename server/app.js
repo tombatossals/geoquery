@@ -3,7 +3,7 @@
 var express = require('express'),
     settings = require('./config/settings'),
     mongoose = require('mongoose'),
-    MongoStore = require('connect-mongostore')(express),
+    MemcachedStore = require('connect-memcached')(express),
     urls_constructor = require('./common/urls_constructor'),
     generate_mongo_url = require('./common/generate_mongo_url'),
     passport = require('passport'),
@@ -26,7 +26,7 @@ else{
 
 var conn = generate_mongo_url(mongo);
 var db = mongoose.connect(conn);
-var sessionStore = new MongoStore({ db: settings.mongo.db });
+var sessionStore = new MemcachedStore();
 
 // configure Express
 app.configure(function() {
@@ -36,7 +36,12 @@ app.configure(function() {
   app.use(express.cookieParser());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.session({ store: sessionStore, secret: settings.cookieSecret }));
+  app.use(express.session({
+  //    cookie: { maxAge: 60000 },
+      store: sessionStore,
+      secret: settings.cookieSecret
+  }));
+  //app.use(express.session({ secret: settings.cookieSecret }));
   app.use(passport.initialize());
   app.use(passport.session());
   app.locals({ urls: urls });

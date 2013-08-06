@@ -15,7 +15,7 @@
     <div class="navbar navbar-fixed-top topmenu">
         <a class="navbar-brand" href="#">Geoquery</a>
         <ul class="nav navbar-nav pull-right">
-            <li><a href="#">About</a></li>
+            <li><a href="#">Hall Of Fame</a></li>
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select a Map&nbsp;<span class="caret"></span></a>
                 <ul class="dropdown-menu">
@@ -41,7 +41,9 @@
     </div>
     <div class="info leftbar" ng-show="map" ng-cloak>
         <h2>{{ name }}</h2>
+        <p><img ng-src="img/flags/{{ actual['alpha-2'] | lowercase }}.png" /></p>
         <p>{{ actual.name }}</p>
+        <h3>{{ players }}</h3>
         <p>Countries left: {{ left }}</p>
     </div>
     <leaflet center="center" legend="legend" geojson="geojson" defaults="defaults" maxbounds="maxbounds" testing="testing"></leaflet>
