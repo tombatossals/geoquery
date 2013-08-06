@@ -15,6 +15,7 @@ var app = express();
 var app_settings = require('./config/settings_' + app.settings.env),
     urls = urls_constructor(app_settings.base_url, relative_urls);
 
+app.set('port', process.env.PORT || app_settings.server_port);
 auth.configure(urls.persona.verify, urls.login);
 
 if(process.env.VCAP_SERVICES){
@@ -59,6 +60,6 @@ app.configure('production', function(){
 
 require('./routes')(app, urls);
 
-socketio.createServer(app, app_settings.server_port);
+socketio.createServer(app, app.get('port'));
 
 module.exports = app;
