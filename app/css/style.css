@@ -126,3 +126,18 @@ div.country > h2 {
 li.space {
     margin-left: 1em;
 }
+
+canvas {
+    pointer-events: none;
+    display:block;
+    margin:10px;
+    z-index: 100;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    border-radius: 12px;
+}
+
+.join {
+    pointer-events: auto;
+}

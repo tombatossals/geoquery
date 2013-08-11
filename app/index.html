@@ -39,12 +39,18 @@
             </li>
         </ul>
     </div>
-    <div class="info leftbar" ng-show="map" ng-cloak>
+    <div class="info leftbar" ng-show="map" ng-cloak ng-switch on="verified">
         <h2>{{ name }}</h2>
         <p><img ng-src="img/flags/{{ actual['alpha-2'] | lowercase }}.png" /></p>
+        <canvas id="countdown" width="100" height="100"></canvas>
         <p>{{ actual.name }}</p>
         <h3>{{ players }}</h3>
-        <p>Countries left: {{ left }}</p>
+        <div ng-switch-when="true">
+            <p>Your score: {{ score }}</p>
+            <p>Players online: {{ players }}</p>
+            <p>Countries left: {{ left }}</p>
+        </div>
+        <button ng-switch-when="false" class="btn btn-default navbar-btn join" ng-click="verify()" ng-switch-when="false">Join the game</a>
     </div>
     <leaflet center="center" legend="legend" geojson="geojson" defaults="defaults" maxbounds="maxbounds" testing="testing"></leaflet>
 
@@ -54,6 +60,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
     <script src="js/angular-leaflet-directive.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="js/countdown.js" /></script>
     <script src="js/app.js" /></script>
     <script src="js/persona.js" /></script>
     <script src="https://login.persona.org/include.js"></script>

@@ -11,6 +11,12 @@
     	"name": "",
     	"db": "heroku_app17346409"
     },
+    "memcached": {
+        "hostname": "mc3.dev.ec2.memcachier.com",
+        "port": 11211,
+        "username": "d8ec40",
+        "password": "20769647dd5abb4da475"
+    },
     "cookieSecret": "eldorado",
     "email_options": {
         "host": "10.228.144.162",

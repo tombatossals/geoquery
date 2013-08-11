@@ -7,6 +7,7 @@ leafletDirective.directive('leaflet', [
         maxZoom: 14,
         minZoom: 1,
         doubleClickZoom: true,
+        scrollWheelZoom: true,
         tileLayer: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         tileLayerOptions: {
             attribution: 'Tiles &copy; Open Street Maps'
@@ -48,7 +49,6 @@ leafletDirective.directive('leaflet', [
             defaults: '=defaults',
             paths: '=paths',
             tiles: '=tiles',
-            leaflet: '=testing',
             events: '=events'
         },
         template: '<div class="angular-leaflet-map"></div>',
@@ -74,11 +74,13 @@ leafletDirective.directive('leaflet', [
             $scope.leaflet.minZoom = !!(attrs.defaults && $scope.defaults && $scope.defaults.minZoom) ?
                 parseInt($scope.defaults.minZoom, 10) : defaults.minZoom;
             $scope.leaflet.doubleClickZoom = !!(attrs.defaults && $scope.defaults && (typeof($scope.defaults.doubleClickZoom) == "boolean") ) ? $scope.defaults.doubleClickZoom  : defaults.doubleClickZoom;
+            $scope.leaflet.scrollWheelZoom = !!(attrs.defaults && $scope.defaults && (typeof($scope.defaults.scrollWheelZoom) == "boolean") ) ? $scope.defaults.scrollWheelZoom  : defaults.scrollWheelZoom;
 
             var map = new L.Map(element[0], {
                 maxZoom: $scope.leaflet.maxZoom,
                 minZoom: $scope.leaflet.minZoom,
-                doubleClickZoom: $scope.leaflet.doubleClickZoom
+                doubleClickZoom: $scope.leaflet.doubleClickZoom,
+                scrollWheelZoom: $scope.leaflet.scrollWheelZoom
             });
 
             map.setView([0, 0], 1);
@@ -243,30 +245,18 @@ leafletDirective.directive('leaflet', [
                         return;
                     }
                     if (center.lat !== undefined && center.lng !== undefined && center.zoom !== undefined) {
-                        map.setView( [center.lat, center.lng], center.zoom, { reset: true });
+                        map.setView( [center.lat, center.lng], center.zoom );
                     } else if (center.autoDiscover === true) {
                         map.locate({ setView: true, maxZoom: $scope.leaflet.maxZoom });
                     }
                 }, true);
 
-                map.on("dragend", function (/* event */) {
+                map.on("moveend", function (/* event */) {
                     $scope.safeApply(function (scope) {
                         centerModel.lat.assign(scope, map.getCenter().lat);
                         centerModel.lng.assign(scope, map.getCenter().lng);
+                        centerModel.zoom.assign(scope, map.getZoom());
                     });
-                });
-
-                map.on("zoomend", function (/* event */) {
-                    if(angular.isUndefined($scope.center)){
-                        $log.warn("[AngularJS - Leaflet] 'center' is undefined in the current scope, did you forget to initialize it?");
-                    }
-                    if (angular.isUndefined($scope.center) || $scope.center.zoom !== map.getZoom()) {
-                        $scope.safeApply(function (s) {
-                            centerModel.zoom.assign(s, map.getZoom());
-                            centerModel.lat.assign(s, map.getCenter().lat);
-                            centerModel.lng.assign(s, map.getCenter().lng);
-                        });
-                    }
                 });
             }
 
@@ -332,18 +322,9 @@ leafletDirective.directive('leaflet', [
                     return;
                 }
 
-                function genMultiMarkersClickCallback(m_name) {
-                    return function(e) {
-                        $rootScope.$apply(function() {
-                            $rootScope.$broadcast('leafletDirectiveMarkersClick', m_name);
-                        });
-                    };
-                }
-
                 for (var name in $scope.markers) {
                     markers[name] = createMarker(
                             'markers.'+name, $scope.markers[name], map);
-                    markers[name].on('click', genMultiMarkersClickCallback(name));
                 }
 
                 $scope.$watch('markers', function(newMarkers) {
@@ -358,7 +339,6 @@ leafletDirective.directive('leaflet', [
                         if (markers[new_name] === undefined) {
                             markers[new_name] = createMarker(
                                 'markers.'+new_name, newMarkers[new_name], map);
-                            markers[new_name].on('click', genMultiMarkersClickCallback(new_name));
                         }
                     }
                 }, true);
@@ -381,6 +361,49 @@ leafletDirective.directive('leaflet', [
                         marker.openPopup();
                     }
                 });
+
+                // Set up marker event broadcasting
+                var markerEvents = [
+                    'click',
+                    'dblclick',
+                    'mousedown',
+                    'mouseover',
+                    'mouseout',
+                    'contextmenu',
+                    'dragstart',
+                    'drag',
+                    'dragend',
+                    'move',
+                    'remove',
+                    'popupopen',
+                    'popupclose'
+                ];
+
+                for( var i=0; i < markerEvents.length; i++) {
+                    var eventName = markerEvents[i];
+
+                    marker.on(eventName, function(e) {
+                        var broadcastName = 'leafletDirectiveMarker.' + this.eventName;
+                        var markerName = scope_watch_name.replace('markers.', '');
+
+                        // Broadcast old marker click name for backwards compatibility
+                        if(this.eventName == "click") {
+                            $rootScope.$apply(function(){
+                                $rootScope.$broadcast('leafletDirectiveMarkersClick', markerName);
+                            });
+                        } else {
+                            $rootScope.$apply(function(){
+                                $rootScope.$broadcast(broadcastName, {
+                                    markerName: markerName,
+                                    leafletEvent: e
+                                });
+                            });
+                        }
+                    }, {
+                        eventName: eventName,
+                        scope_watch_name: scope_watch_name
+                    });
+                }
 
                 var clearWatch = $scope.$watch(scope_watch_name, function (data, old_data) {
                     if (!data) {

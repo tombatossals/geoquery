@@ -9,6 +9,10 @@
 
         angular.extend($scope, {
             leaflet: {},
+            good: [],
+            bad: [],
+            score: 0,
+            countdown: undefined,
             verified:false,
             error:false,
             email: "",
@@ -21,6 +25,8 @@
             maxZoom: 5,
             maxBounds: {}
         });
+
+        var canvas = document.getElementById("countdown");
 
         $scope.$on(
             "$routeChangeSuccess",
@@ -53,13 +59,16 @@
         }
 
         function mouseout(e) {
-            if (!$scope.verified) return;
+            if (!$scope.verified || !$scope.actual) return;
+            if ($scope.out && $scope.out.indexOf(e.target.feature.id) !== -1) return;
+            console.log("rest");
             $scope.testing.geojson.resetStyle(e.target);
         }
 
         // Mouse over function, called from the Leaflet Map Events
         function mouseover(e) {
             if (!$scope.verified) return;
+            if ($scope.out && $scope.out.indexOf(e.target.feature.id) !== -1) return;
             var layer = e.target;
             layer.setStyle({
                 weight: 2,
@@ -70,14 +79,29 @@
         }
 
         function sendCountry(country, event) {
-            if (country.id === $scope.actual.alpha3) {
-                console.log("good!");
+            if (!$scope.verified || !$scope.actual) return;
+            if ($scope.out && $scope.out.indexOf(country.id) !== -1) return;
+            if (country.id === $scope.actual['alpha-3']) {
+                $scope.good.push($scope.actual['alpha-3']);
+                $scope.out.push($scope.actual['alpha-3']);
+                $scope.score++;
+                deactivateCountry($scope.actual['alpha-3'], 'good');
             } else {
-                console.log("bad!", $scope.countries[country.id].name, $scope.actual.name);
+                $scope.bad.push($scope.actual['alpha-3']);
+                $scope.out.push($scope.actual['alpha-3']);
+                deactivateCountry($scope.actual['alpha-3'], 'bad');
+                $scope.score--;
             }
+            if ($scope.countdown) {
+                $scope.countdown.destroy = true;
+            }
+            $scope.$apply();
         }
 
         function resetMap(map) {
+            $scope.out = [];
+            $scope.bad = [];
+            $scope.good = [];
             for (var i in $scope.testing.geojson._layers) {
                 var layer = $scope.testing.geojson._layers[i];
                 $scope.testing.geojson.resetStyle(layer);
@@ -94,14 +118,20 @@
             return undefined;
         }
 
-        function deactivateCountry(code) {
+        function deactivateCountry(code, status) {
+            var color = "yellow";
+            if (status === "good") {
+                color = "green";
+            } else if (status === "bad") {
+                color = "red";
+            }
             var layer = findVector($scope.testing.geojson._layers, code);
             if (layer) {
                 layer.setStyle({
-                    fillOpacity: 0,
+                    fillOpacity: 0.1,
                     weight: 0,
-                    color: '#666',
-                    fillColor: 'white'
+                    color: color,
+                    fillColor: color
                 });
                 layer.bringToFront();
             } else {
@@ -135,25 +165,24 @@
                             }
                         });
 
-                        $timeout(function getSeconds(){
-                            $scope.countdown = 60 - new Date().getSeconds();
-                            $timeout(getSeconds, 1000);
-                        },1000);
-
                         var socket = io.connect('http://localhost/' + map);
                         socket.on('next', function (data) {
                             if (data.reset) {
                                 resetMap(map);
-                            } else if ($scope.actual) {
+                            } else if ($scope.actual && $scope.good.indexOf($scope.actual['alpha-3']) === -1 && $scope.bad.indexOf($scope.actual['alpha-3']) === -1) {
+                                $scope.out.push($scope.actual["alpha-3"]);
+                                console.log($scope.actual["alpha-3"]);
                                 deactivateCountry($scope.actual["alpha-3"]);
                             }
-
                             $scope.actual = $scope.countries[data.next];
+                            $scope.countdown = new CountDown(canvas, 5);
                             $scope.left = data.left;
+                            $scope.$apply();
                         });
 
                         socket.emit('init', map);
                         socket.on('initresponse', function(data) {
+                            $scope.out = data.out;
                             for (var i in data.out) {
                                 var country = data.out[i];
                                 deactivateCountry(country);
